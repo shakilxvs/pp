@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PELLI | Catalogue</title>
+<meta name="description" content="PELLI footwear catalogue: styles, colours, sizes and SKUs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff; --ink:#111; --muted:#767676; --line:#e6e6e6; --soft:#efefef; --soft2:#f7f7f7;
+  --sale:#e60023; --radius:20px;
+  --head:"DM Sans","Inter",system-ui,sans-serif; --body:"Inter","DM Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.logo,.price,.pill,button{font-family:var(--head)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1500px;margin:0 auto;padding:0 24px}
+[hidden]{display:none!important}
+
+/* header */
+.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(12px)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:72px}
+.logo{font-weight:700;font-size:24px;letter-spacing:.14em;line-height:1;display:flex;align-items:center;gap:10px}
+.logo i{font-style:normal;font-weight:500;font-size:11px;letter-spacing:.14em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+.search{flex:1;position:relative}
+.search input{width:100%;height:48px;border:0;background:var(--soft);border-radius:999px;padding:0 20px 0 50px;font:inherit;color:inherit}
+.search input:hover{background:#e8e8e8}
+.search input:focus{outline:2px solid var(--ink);background:#fff}
+.search svg{position:absolute;left:19px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+.btn{height:48px;border-radius:999px;background:var(--soft);display:inline-flex;align-items:center;gap:8px;padding:0 20px;font-weight:600;font-size:15px;position:relative}
+.btn:hover{background:#e4e4e4}
+.btn svg{width:20px;height:20px}
+.btn .dot{position:absolute;top:2px;right:2px;min-width:20px;height:20px;border-radius:999px;background:var(--ink);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px;border:2px solid #fff}
+.viewtog{display:flex;background:var(--soft);border-radius:999px;padding:4px}
+.viewtog button{width:40px;height:40px;border-radius:999px;display:grid;place-items:center;color:var(--muted)}
+.viewtog button[aria-pressed=true]{background:var(--ink);color:#fff}
+.viewtog svg{width:18px;height:18px}
+
+/* intro + active filters */
+.intro{padding:14px 0 6px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.intro h1{margin:0;font-size:clamp(26px,3.4vw,38px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.intro p{margin:0;color:var(--muted);font-size:14px}
+.active{display:flex;gap:8px;flex-wrap:wrap;padding:8px 0 4px}
+.achip{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;border-radius:999px;padding:7px 8px 7px 14px;font-size:13px;font-weight:500}
+.achip span{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:13px;line-height:1}
+.aclear{font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:7px 6px}
+
+/* swatches */
+.sw{--s:16px;width:var(--s);height:var(--s);border-radius:50%;border:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);padding:0;flex:none;display:inline-block;position:relative;transition:transform .15s}
+button.sw:hover{transform:scale(1.18)}
+.sw[aria-pressed=true]{box-shadow:inset 0 0 0 1px rgba(0,0,0,.18),0 0 0 2px #fff,0 0 0 3.5px var(--ink)}
+.sw.lg{--s:26px}
+
+/* cards: masonry (Pinterest style) */
+.masonry{display:flex;gap:20px;align-items:flex-start;padding:14px 0 80px}
+.mcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:26px}
+.card{display:flex;flex-direction:column;gap:10px;min-width:0}
+.media{position:relative;display:block;border-radius:var(--radius);overflow:hidden;background:var(--soft)}
+.media:not(.loaded){aspect-ratio:4/5;background:linear-gradient(100deg,#efefef 30%,#f8f8f8 50%,#efefef 70%);background-size:300% 100%;animation:sh 1.3s infinite linear}
+@keyframes sh{from{background-position:100% 0}to{background-position:0 0}}
+.media img{width:100%;height:auto;display:block;transition:opacity .25s,transform .5s}
+.media:not(.loaded) img{position:absolute;inset:0;height:100%;object-fit:cover;opacity:0}
+.media.loaded img{opacity:1}
+.media.failed{aspect-ratio:4/5}
+.media.failed::after{content:"Image unavailable";position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px}
+.media img.broken{display:none}
+.card:hover .media img{transform:scale(1.03)}
+.media::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .2s;z-index:1;pointer-events:none}
+.card:hover .media::before{background:rgba(0,0,0,.08)}
+.badge{position:absolute;top:12px;left:12px;z-index:2;background:var(--sale);color:#fff;font-family:var(--head);font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+.ctag{position:absolute;left:12px;bottom:12px;z-index:2;background:#fff;color:var(--ink);font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;max-width:calc(100% - 24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(4px);transition:.2s;font-family:var(--head)}
+.card:hover .ctag{opacity:1;transform:none}
+.cbody{padding:0 4px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.cat{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-family:var(--head)}
+.card h3{font-weight:600;font-size:16px;line-height:1.25;margin:0;letter-spacing:-.005em}
+.skus{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skus b{color:var(--ink);font-weight:500}
+.swrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:2px 0}
+.cname{font-size:13px;color:var(--muted);margin-left:2px}
+.prow{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.price{font-weight:700;font-size:16px}
+.was{color:var(--muted);text-decoration:line-through;font-size:14px}
+.off{color:var(--sale);font-size:13px;font-weight:600}
+.sizes{font-size:13px;color:var(--muted)}
+.cdetail,.cdesc{display:none}
+
+/* list view */
+.list{display:flex;flex-direction:column;gap:12px;padding:14px 0 80px}
+.list .card{flex-direction:row;gap:18px;align-items:stretch;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.list .media{width:220px;aspect-ratio:1;flex:none;border-radius:14px}
+.list .media:not(.loaded),.list .media.failed{aspect-ratio:1}
+.list .media img,.list .media:not(.loaded) img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.list .cbody{flex:1;display:grid;grid-template-columns:1fr auto;gap:6px 24px;align-content:start;padding:6px 8px 6px 0}
+.list .cat,.list .card h3,.list .cdesc,.list .cdetail{grid-column:1}
+.list .cdesc{display:block;color:var(--muted);font-size:14px;max-width:62ch}
+.list .swrow,.list .skus,.list .ctag{display:none}
+.list .cdetail{display:flex;flex-wrap:wrap;gap:8px}
+.list .card h3{font-size:22px}
+.list .prow{grid-column:2;grid-row:1/3;flex-direction:column;align-items:flex-end;gap:2px}
+.list .price{font-size:22px}
+.list .sizes{grid-column:2;grid-row:3;text-align:right;align-self:end}
+.cd{display:flex;align-items:center;gap:8px;background:var(--soft2);border-radius:999px;padding:6px 14px 6px 8px;font-size:13px;cursor:pointer}
+.cd[aria-pressed=true]{background:var(--ink);color:#fff}
+.cd .sw{--s:16px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.cd b{font-weight:600}
+.cd em{font-style:normal;opacity:.65}
+
+.empty{padding:90px 0 120px;text-align:center;color:var(--muted)}
+.empty h2{color:var(--ink);font-size:28px;margin:0 0 6px}
+.empty .btn{margin-top:14px;background:var(--ink);color:#fff}
+
+/* drawer filters */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.scrim.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:#fff;z-index:61;display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility .3s;box-shadow:-20px 0 60px rgba(0,0,0,.15)}
+.drawer.open{transform:none;visibility:visible}
+.dh{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line)}
+.dh h2{margin:0;font-size:20px;font-weight:700}
+.x{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:24px;line-height:1;background:var(--soft)}
+.dbody{flex:1;overflow-y:auto;padding:6px 24px 20px}
+.fsec{padding:18px 0;border-bottom:1px solid var(--line)}
+.fsec:last-child{border:0}
+.fsec h3{margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:.02em}
+.fchips{display:flex;flex-wrap:wrap;gap:8px}
+.fc{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;background:var(--soft);font-size:14px;font-weight:500}
+.fc:hover{background:#e4e4e4}
+.fc i{font-style:normal;color:var(--muted);font-size:12px}
+.fc[aria-pressed=true]{background:var(--ink);color:#fff}
+.fc[aria-pressed=true] i{color:rgba(255,255,255,.65)}
+.fc.sz{min-width:50px;justify-content:center;padding:0 12px}
+.fc .sw{--s:18px}
+.fc[aria-pressed=true] .sw{box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)}
+.sale-row{display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:500;cursor:pointer}
+.switch{width:46px;height:28px;border-radius:999px;background:#cfcfcf;position:relative;transition:background .2s;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.sale-row[aria-pressed=true] .switch{background:var(--ink)}
+.sale-row[aria-pressed=true] .switch::after{transform:translateX(18px)}
+.df{display:flex;gap:10px;padding:14px 24px;border-top:1px solid var(--line);background:#fff}
+.df .btn{flex:1;justify-content:center;height:50px}
+.df .go{background:var(--ink);color:#fff;flex:2}
+.df .go:hover{background:#333}
+
+/* product page */
+.pdp{padding-top:10px;padding-bottom:80px}
+.crumbs{font-size:13px;color:var(--muted);margin:8px 0 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.crumbs a{color:var(--ink);font-weight:600;display:inline-flex;align-items:center;gap:6px;background:var(--soft);border-radius:999px;padding:7px 14px 7px 10px}
+.pgrid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;align-items:start}
+.gal{position:sticky;top:90px}
+.stage{position:relative;aspect-ratio:1;background:var(--soft);border-radius:28px;overflow:hidden}
+.stage:not(.loaded){background:linear-gradient(100deg,#efefef 30%,#f8f8f8 50%,#efefef 70%);background-size:300% 100%;animation:sh 1.3s infinite linear}
+.stage img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;transition:opacity .2s}
+.stage img.loading{opacity:.35}
+.stage.failed::after{content:"Image unavailable";position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:14px}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:0 2px 12px rgba(0,0,0,.18);font-size:24px;line-height:1;display:grid;place-items:center}
+.nav.prev{left:14px}.nav.next{right:14px}
+.imgcount{position:absolute;right:14px;bottom:14px;background:rgba(17,17,17,.75);color:#fff;font-size:12px;padding:4px 11px;border-radius:999px}
+.thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding:4px 4px 8px;scrollbar-width:none}
+.thumbs::-webkit-scrollbar{display:none}
+.th{flex:none;width:72px;height:72px;border-radius:14px;overflow:hidden;position:relative;background:var(--soft);opacity:.75}
+.th img{width:100%;height:100%;object-fit:cover}
+.th[aria-current=true]{opacity:1;outline:2px solid var(--ink);outline-offset:2px}
+.th .sw{position:absolute;right:5px;bottom:5px;--s:14px;box-shadow:0 0 0 2px #fff}
+.titlerow{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin:8px 0 12px}
+.info h1{font-weight:700;font-size:clamp(30px,3.6vw,44px);line-height:1.05;margin:0;letter-spacing:-.025em}
+.cat.big{font-size:12px}
+.share{height:42px;border-radius:999px;background:var(--soft);padding:0 16px;font-size:14px;font-weight:600;white-space:nowrap}
+.info .price{font-size:28px}
+.info .was{font-size:18px}
+.info .off{font-size:14px}
+.prow.big{align-items:center}
+.skuline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 4px;font-size:14px;color:var(--muted)}
+.skuline strong{color:var(--ink);font-size:14px;background:var(--soft);padding:5px 12px;border-radius:999px;font-weight:600}
+.copy{font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.sect{border-top:1px solid var(--line);padding:20px 0;margin-top:18px}
+.sect h2{font-size:13px;font-weight:700;letter-spacing:.02em;margin:0 0 14px;display:flex;justify-content:space-between;gap:10px}
+.sect h2 b{font-weight:500;color:var(--muted)}
+.colors{display:flex;flex-wrap:wrap;gap:10px}
+.cpill{display:flex;align-items:center;gap:10px;background:var(--soft);border-radius:16px;padding:10px 16px 10px 12px;text-align:left}
+.cpill:hover{background:#e6e6e6}
+.cpill .sw{pointer-events:none}
+.cpill b{display:block;font-size:14px;line-height:1.2;font-weight:600}
+.cpill small{color:var(--muted);font-size:12px}
+.cpill[aria-pressed=true]{background:#fff;box-shadow:inset 0 0 0 2px var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-width:56px;height:56px;border-radius:14px;background:var(--soft);font-weight:600;padding:0 12px;font-size:15px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.1}
+.chip small{font-family:var(--body);font-size:11px;font-weight:500;color:var(--muted)}
+.chip:hover{background:#e4e4e4}
+.chip[aria-pressed=true]{background:var(--ink);color:#fff}
+.chip[aria-pressed=true] small{color:rgba(255,255,255,.7)}
+.chip.zero{background:var(--soft2);color:#a0a0a0;box-shadow:inset 0 0 0 1px var(--line)}
+.chip.zero small{color:#b0b0b0}
+.chip.zero[aria-pressed=true]{background:var(--ink);color:#fff}
+.stk{display:inline-flex;align-items:center;gap:7px;font-weight:600}
+.stk::before{content:"";width:8px;height:8px;border-radius:50%;background:#2e9e5b}
+.stk.low::before{background:#e8a317}
+.stk.out::before{background:#d6d6d6}
+.stk.neg::before{background:var(--sale)}
+.stk.out{color:var(--muted);font-weight:500}
+.stk.neg{color:var(--sale)}
+.picked{margin-top:14px;font-size:14px;background:var(--soft2);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.desc{color:#333;font-size:15px}
+.desc p{margin:0 0 10px}
+.specs{display:grid;grid-template-columns:auto 1fr;gap:8px 28px;font-size:14px;margin:0}
+.specs dt{color:var(--muted)}.specs dd{margin:0;font-weight:500}
+.tablehead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tablehead h2{margin:0}
+.tog{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:600;cursor:pointer;user-select:none}
+.tog input{accent-color:var(--ink);width:16px;height:16px}
+.tablewrap{border:1px solid var(--line);border-radius:16px;overflow:auto;max-height:420px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{position:sticky;top:0;background:var(--soft2);text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:12px 16px;z-index:1;font-family:var(--head)}
+td{padding:10px 16px;border-top:1px solid var(--line);white-space:nowrap}
+td .tc{display:flex;align-items:center;gap:8px}
+td .sw{--s:14px}
+tr.hl td{background:#f2f2f2;font-weight:600}
+.pn{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--line);padding-top:24px}
+.pn a{display:flex;flex-direction:column;gap:2px;max-width:48%}
+.pn a small{font-size:12px;color:var(--muted);font-weight:600}
+.pn a span{font-family:var(--head);font-size:20px;font-weight:700;letter-spacing:-.01em}
+.pn a:last-child{text-align:right;margin-left:auto}
+.rel h2{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:54px 0 4px}
+.rel .masonry,.rel .list{padding-bottom:0}
+
+/* lightbox */
+.lb{position:fixed;inset:0;background:rgba(10,10,10,.95);z-index:100;display:grid;place-items:center;padding:30px}
+.lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:12px}
+.lb button{position:absolute;background:rgba(255,255,255,.16);color:#fff;width:48px;height:48px;border-radius:50%;font-size:26px;display:grid;place-items:center}
+.lb .x{top:18px;right:18px}.lb .p{left:18px;top:50%}.lb .n{right:18px;top:50%}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;z-index:120}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{padding:30px 0 44px;color:var(--muted);font-size:13px;text-align:center}
+footer b{font-family:var(--head);letter-spacing:.14em;color:var(--ink)}
+
+@media (max-width:1099px){.pgrid{gap:32px}}
+@media (max-width:900px){
+  .pgrid{grid-template-columns:minmax(0,1fr);gap:24px}.gal{position:static}
+}
+@media (max-width:700px){
+  .wrap{padding:0 14px}
+  .top .wrap{flex-wrap:wrap;height:auto;padding-top:10px;padding-bottom:10px;gap:10px}
+  .logo{font-size:21px;margin-right:auto}.logo i{display:none}
+  .search{order:3;flex-basis:100%}.search input{height:44px}
+  .btn{height:44px;padding:0 14px}.btn .lbl{display:none}
+  .viewtog{display:none}
+  .intro{padding-top:8px}
+  .list{gap:10px;padding-top:10px}
+  .list .card{gap:12px;padding:10px;border-radius:18px;align-items:flex-start}
+  .list .media{width:116px;height:116px;border-radius:12px}
+  .list .cbody{display:flex;gap:4px;padding:2px 0}
+  .list .card h3{font-size:16px}
+  .list .cdesc,.list .cdetail{display:none}
+  .list .swrow{display:flex}
+  .list .skus{display:block}
+  .list .cname{display:none}
+  .list .prow{flex-direction:row;align-items:baseline;gap:8px}
+  .list .price{font-size:16px}
+  .list .sizes{text-align:left}
+  .drawer{top:auto;left:0;right:0;width:100%;max-height:88vh;border-radius:24px 24px 0 0;transform:translateY(100%);box-shadow:0 -10px 50px rgba(0,0,0,.2)}
+  .drawer.open{transform:none}
+  .th{width:62px;height:62px}
+  .titlerow{flex-direction:column;gap:10px}
+  .stage{border-radius:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#/" aria-label="PELLI catalogue home">PELLI</a>
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search style, SKU or colour" aria-label="Search products" autocomplete="off">
+    </label>
+    <button class="btn" id="fbtn" aria-label="Open filters" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+      <span class="lbl">Filters</span><span class="dot" id="fdot" hidden></span>
+    </button>
+    <div class="viewtog" id="viewtog" role="group" aria-label="Layout">
+      <button data-view="grid" aria-pressed="true" aria-label="Grid view" title="Grid view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
+      <button data-view="rows" aria-pressed="false" aria-label="List view" title="List view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r=".8"/><circle cx="3.5" cy="12" r=".8"/><circle cx="3.5" cy="18" r=".8"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="catalog">
+    <div class="wrap">
+      <div class="intro"><h1>Collection</h1><p id="introsub"></p></div>
+      <div class="active" id="active" hidden></div>
+      <div id="list"></div>
+      <div class="empty" id="empty" hidden><h2>No styles found</h2><p>Try a different search or clear the filters.</p><button class="btn" id="emptyclear">Clear filters</button></div>
+    </div>
+  </section>
+
+  <section id="product" hidden>
+    <div class="wrap pdp">
+      <div class="crumbs" id="crumbs"></div>
+      <div class="pgrid">
+        <div class="gal" id="gal"></div>
+        <div class="info" id="info"></div>
+      </div>
+      <div class="pn" id="pn"></div>
+      <div class="rel" id="rel"></div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><b>PELLI</b><br>Catalogue preview. Prices shown per pair.</div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Filters" aria-hidden="true">
+  <div class="dh"><h2>Filters</h2><button class="x" id="dclose" aria-label="Close filters">&times;</button></div>
+  <div class="dbody" id="dbody"></div>
+  <div class="df"><button class="btn" id="dclear">Clear all</button><button class="btn go" id="dgo">Show styles</button></div>
+</aside>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="x" data-a="lbx" aria-label="Close">&times;</button>
+  <button class="p" data-a="lbp" aria-label="Previous image">&#8249;</button>
+  <img id="lbimg" alt="">
+  <button class="n" data-a="lbn" aria-label="Next image">&#8250;</button>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const CURRENCY = "$";
+const DATA = [{"handle":"high-top-double-velcro-strap","title":"High-Top Double Velcro Strap","vendor":"PELLI","category":"Sneakers","desc":"<p>Perfect fit meets effortless style.<br>Crafted from premium suede leather with a durable rubber sole, these high-top shoes feature two convenient Velcro straps for easy wear and a secure fit.<br>Designed to stand beautifully on the foot, they are ideal for everyday wear and outings.<\/p>","images":["https://cdn.shopify.com/s/files/1/0685/4859/1755/files/WhatsApp_Image_2025-06-30_at_11.32.25_AM.jpg?v=1754336217","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/1A9A5076_websize.jpg?v=1754336247","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_N-1_HIGH-TOP_DOUBLE_VELCRO_STRAP_NAVY_SUEDE_2.jpg?v=1753443828","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/StyleN-1HIGH-TOPDOUBLEVELCROSTRAPNAVYSUEDE1.jpg?v=1753443828"],"min":70.0,"max":70.0,"compare":null,"sizes":["23","24","25","26","27","28","29","30","31","32","33","34"],"colors":[{"name":"Navy Suede","sku":"Style N","hex":["#243462"],"family":"Navy & Blue","image":"https://cdn.shopify.com/s/files/1/0685/4859/1755/files/WhatsApp_Image_2025-06-30_at_11.32.25_AM.jpg?v=1754336217","variants":[{"size":"23","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"24","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"25","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"26","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"27","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"28","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"29","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"30","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"31","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"32","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"33","sku":"Style N","price":70.0,"qty":null,"compare":null},{"size":"34","sku":"Style N","price":70.0,"qty":null,"compare":null}]}]},{"handle":"velvet-lace-shoes","title":"Velvet Lace Shoes","vendor":"PELLI","category":"Lace-ups","desc":"<p>Perfectly crafted for tiny feet taking their first steps.<br>Made from soft leather with a durable rubber sole, these lace-up shoes feature a cozy corduroy cuff for added comfort and style.<br>Designed with strength, comfort, and an impeccable silhouette, they are ideal for both special occasions and everyday wear.<\/p>","images":["https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_J-3_VELVET_LACE_SHOES_BLACK_VELVET_1_cab4f4de-d282-4cae-ad15-42d20985b7eb.jpg?v=1753902329","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/1A9A4631_websize.jpg?v=1754336247","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_J-3_VELVET_LACE_SHOES_BLACK_VELVET_3_08a77bc7-4bde-4c3f-99e8-07a616aa8f45.jpg?v=1753902329","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_J-3_VELVET_LACE_SHOES_BLACK_VELVET_2_d565a83f-df0b-4e62-9cae-15fcbb415a00.jpg?v=1753902329"],"min":70.0,"max":70.0,"compare":null,"sizes":["19","20","21","22","23","24"],"colors":[{"name":"Black Velvet","sku":"J3","hex":["#1b1816"],"family":"Black","image":"https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_J-3_VELVET_LACE_SHOES_BLACK_VELVET_1_cab4f4de-d282-4cae-ad15-42d20985b7eb.jpg?v=1753902329","variants":[{"size":"19","sku":"J3","price":70.0,"qty":null,"compare":null},{"size":"20","sku":"J3","price":70.0,"qty":null,"compare":null},{"size":"21","sku":"J3","price":70.0,"qty":null,"compare":null},{"size":"22","sku":"J3","price":70.0,"qty":null,"compare":null},{"size":"23","sku":"J3","price":70.0,"qty":null,"compare":null},{"size":"24","sku":"J3","price":70.0,"qty":null,"compare":null}]}]},{"handle":"sneakers","title":"Sneakers","vendor":"PELLI","category":"Sneakers","desc":"<p>Durable craftsmanship meets everyday comfort.<br>Made from a blend of smooth leather and suede with a sturdy rubber sole, these sneakers are designed for both casual wear and active play.<br>Perfectly suited for school days, sports, and all daily adventures.<\/p>","images":["https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-2_SNEAKERS_NAVY_LEATHER_SUEDE_3.jpg?v=1754336235","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/1A9A4853_websize.jpg?v=1754336235","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/1A9A4847_websize.jpg?v=1754336235","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/1A9A5076_websize.jpg?v=1754336247","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-1_SNEAKERS_BLACK_LEATHER_SUEDE_3.jpg?v=1753451535","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-1_SNEAKERS_BLACK_LEATHER_SUEDE_2.jpg?v=1753443842","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-1_SNEAKERS_BLACK_LEATHER_SUEDE_1.jpg?v=1753443842","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-2_SNEAKERS_NAVY_LEATHER_SUEDE_1.jpg?v=1753443842","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-2_SNEAKERS_NAVY_LEATHER_SUEDE_2.jpg?v=1753443842"],"min":70.0,"max":70.0,"compare":null,"sizes":["26","27","28","29","30","31","32","33","34","35"],"colors":[{"name":"Black Leather + Suede","sku":"Style M-1","hex":["#1b1816"],"family":"Black","image":"https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-1_SNEAKERS_BLACK_LEATHER_SUEDE_3.jpg?v=1753451535","variants":[{"size":"26","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"27","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"28","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"29","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"30","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"31","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"32","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"33","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"34","sku":"Style M-1","price":70.0,"qty":null,"compare":null},{"size":"35","sku":"Style M-1","price":70.0,"qty":null,"compare":null}]},{"name":"Navy Leather + Suede","sku":"Style M-2","hex":["#243462"],"family":"Navy & Blue","image":"https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_M-2_SNEAKERS_NAVY_LEATHER_SUEDE_3.jpg?v=1754336235","variants":[{"size":"26","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"27","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"28","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"29","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"30","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"31","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"32","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"33","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"34","sku":"Style M-2","price":70.0,"qty":null,"compare":null},{"size":"35","sku":"Style M-2","price":70.0,"qty":null,"compare":null}]}]},{"handle":"v-detail-mark-jane","title":"V Detail Mark Jane","vendor":"PELLI","category":"Mary Janes","desc":"<p>Sophisticated elegance with a distinctive touch.<br>Crafted from premium leather with a durable rubber sole, this Mary Jane features a unique V-shaped detail and a stylish snap-closure strap.<br>The exquisite design adds a rich, elegant flair to any outfit, perfect for special occasions and refined everyday wear.<\/p>","images":["https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_D-1_V_DETAIL_MARK_JANE_BLACK_VELVET_2.jpg?v=1754336325","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/1A9A5093_websize.jpg?v=1754336325","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_D-1_V_DETAIL_MARK_JANE_BLACK_VELVET_3.jpg?v=1753443992","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_D-2_V_DETAIL_MARK_JANE_BLACK_PATENT_LEATHER_3_b14f36da-613d-4c5c-acc7-a4783289bcbc.jpg?v=1753443992","https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_D-2_V_DETAIL_MARK_JANE_BLACK_PATENT_LEATHER_2_d6e9fba2-b5b8-4857-8b2d-149a7a6c02d0.jpg?v=1753443992"],"min":70.0,"max":70.0,"compare":null,"sizes":["23","24","25","26","27","28","29","30","31","32","33","34","35","36","37"],"colors":[{"name":"Black Velvet","sku":"Style D-1","hex":["#1b1816"],"family":"Black","image":"https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_D-1_V_DETAIL_MARK_JANE_BLACK_VELVET_2.jpg?v=1754336325","variants":[{"size":"23","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"24","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"25","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"26","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"27","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"28","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"29","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"30","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"31","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"32","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"33","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"34","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"35","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"36","sku":"Style D-1","price":70.0,"qty":null,"compare":null},{"size":"37","sku":"Style D-1","price":70.0,"qty":null,"compare":null}]},{"name":"Black Patent Leather","sku":"Style D-2","hex":["#1b1816"],"family":"Black","image":"https://cdn.shopify.com/s/files/1/0685/4859/1755/files/Style_D-2_V_DETAIL_MARK_JANE_BLACK_PATENT_LEATHER_3_b14f36da-613d-4c5c-acc7-a4783289bcbc.jpg?v=1753443992","variants":[{"size":"23","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"24","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"25","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"26","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"27","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"28","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"29","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"30","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"31","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"32","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"33","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"34","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"35","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"36","sku":"Style D-2","price":70.0,"qty":null,"compare":null},{"size":"37","sku":"Style D-2","price":70.0,"qty":null,"compare":null}]}]}];
+
+/* ---------- helpers ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const qtyOf = x => x.qty == null ? "-" : x.qty;
+const stkCls = q => q == null ? "out" : q < 0 ? "neg" : q === 0 ? "out" : q <= 2 ? "low" : "";
+const stkTxt = q => q == null ? "n/a" : q < 0 ? q + " (oversold)" : q === 0 ? "0" : String(q);
+const units = list => list.reduce((n, x) => n + Math.max(x.qty || 0, 0), 0);
+const money = n => CURRENCY + (Number.isInteger(n) ? n.toFixed(0) : n.toFixed(2));
+const img = (u, w) => u ? u + (u.includes("?") ? "&" : "?") + "width=" + w : "";
+const sizeRange = a => a.length ? (a[0] === a[a.length - 1] ? a[0] : a[0] + "–" + a[a.length - 1]) : "";
+const swStyle = h => h.length > 1 ? `background:linear-gradient(135deg,${h[0]} 50%,${h[1]} 50%)` : `background:${h[0]}`;
+const pct = (p, c) => Math.round((1 - p / c) * 100);
+const store = { get(k, d) { try { return localStorage.getItem(k) ?? d } catch { return d } }, set(k, v) { try { localStorage.setItem(k, v) } catch { } } };
+const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const isMobile = () => matchMedia("(max-width:700px)").matches;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show"), 1600); }
+
+DATA.forEach(p => {
+  p.skuText = p.colors.map(c => c.sku).join(" ");
+  const seen = {};
+  p.colors.forEach((c, i) => { let s = slugify(c.name) || "colour"; if (seen[s]) s += "-" + (i + 1); seen[s] = 1; c.slug = s; });
+  p.colorByImg = {}; p.colors.forEach((c, i) => { if (c.image && !(c.image in p.colorByImg)) p.colorByImg[c.image] = i; });
+  if (!p.images.length) p.images = p.colors.map(c => c.image).filter(Boolean);
+});
+const byHandle = Object.fromEntries(DATA.map(p => [p.handle, p]));
+const colorHref = (p, i, size) => `#/p/${p.handle}/${p.colors[i].slug}${size ? "/" + encodeURIComponent(size) : ""}`;
+
+/* images: reveal when loaded, retry once without the width parameter if the CDN refuses it */
+document.addEventListener("load", e => {
+  const t = e.target; if (t.tagName !== "IMG") return;
+  const box = t.closest(".media,.stage,.th"); if (box) box.classList.add("loaded");
+}, true);
+document.addEventListener("error", e => {
+  const t = e.target; if (t.tagName !== "IMG") return;
+  if (!t.dataset.retry && /[?&]width=\d+/.test(t.src)) {
+    t.dataset.retry = 1;
+    t.src = t.src.replace(/([?&])width=\d+&?/, "$1").replace(/[?&]$/, "");
+    return;
+  }
+  t.classList.add("broken");
+  const box = t.closest(".media,.stage,.th"); if (box) box.classList.add("failed", "loaded");
+}, true);
+function swapImg(im, url, alt) {
+  delete im.dataset.retry; im.classList.remove("broken");
+  const box = im.closest(".media,.stage,.th"); if (box) box.classList.remove("failed");
+  im.alt = alt; im.src = url;
+}
+
+/* ---------- filter state ---------- */
+const S = { q: "", cat: "All", size: "", fam: "", price: "", sale: false, sort: "featured", view: store.get("view", "grid") };
+const PRICES = [["u40", "Under $40", 0, 40], ["40", "$40 to $60", 40, 60], ["60", "$60 to $80", 60, 80], ["80", "$80 and up", 80, 1e9]]
+  .map(([k, l, a, b]) => [k, l.replace(/\$/g, CURRENCY), a, b]);
+const SORTS = [["featured", "Featured"], ["plh", "Price: low to high"], ["phl", "Price: high to low"], ["az", "Name: A to Z"], ["sku", "Style code"]];
+const ALLSIZES = [...new Set(DATA.flatMap(p => p.sizes))].sort((a, b) => a - b);
+const CATS = [...new Set(DATA.map(p => p.category))];
+const FAMS = [...new Set(DATA.flatMap(p => p.colors.map(c => c.family)))].sort();
+const famHex = f => { for (const p of DATA) for (const c of p.colors) if (c.family === f) return c.hex; return ["#ccc"]; };
+const effView = () => isMobile() ? "rows" : S.view;
+
+function matches(p) {
+  if (S.cat !== "All" && p.category !== S.cat) return false;
+  if (S.size && !p.sizes.includes(S.size)) return false;
+  if (S.fam && !p.colors.some(c => c.family === S.fam)) return false;
+  if (S.sale && !p.compare) return false;
+  if (S.price) { const r = PRICES.find(x => x[0] === S.price); if (p.min < r[2] || p.min >= r[3]) return false; }
+  if (S.q) {
+    const hay = (p.title + " " + p.category + " " + p.skuText + " " + p.colors.map(c => c.name).join(" ")).toLowerCase();
+    if (!S.q.split(/\s+/).every(w => hay.includes(w))) return false;
+  }
+  return true;
+}
+function filtered() {
+  let items = DATA.filter(matches);
+  const sorters = {
+    plh: (a, b) => a.min - b.min, phl: (a, b) => b.min - a.min,
+    az: (a, b) => a.title.localeCompare(b.title),
+    sku: (a, b) => a.colors[0].sku.localeCompare(b.colors[0].sku, undefined, { numeric: true })
+  };
+  return sorters[S.sort] ? items.slice().sort(sorters[S.sort]) : items;
+}
+const activeFilters = () => [
+  S.cat !== "All" && ["cat", S.cat], S.fam && ["fam", S.fam], S.size && ["size", "Size " + S.size],
+  S.price && ["price", PRICES.find(x => x[0] === S.price)[1]], S.sale && ["sale", "On sale"],
+  S.sort !== "featured" && ["sort", SORTS.find(x => x[0] === S.sort)[1]]
+].filter(Boolean);
+function clearFilters() { Object.assign(S, { cat: "All", size: "", fam: "", price: "", sale: false, sort: "featured" }); renderList(); renderDrawer(); }
+
+/* ---------- cards ---------- */
+function cardHTML(p, ci = 0) {
+  const c = p.colors[ci];
+  const pctOff = p.compare ? pct(p.min, p.compare) : 0;
+  const href = colorHref(p, ci);
+  const sw = p.colors.map((x, i) => `<button class="sw" data-i="${i}" aria-pressed="${i === ci}" aria-label="${esc(x.name)}" title="${esc(x.name)} (${esc(x.sku)})" style="${swStyle(x.hex)}"></button>`).join("");
+  const detail = p.colors.map((x, i) => `<div class="cd" data-i="${i}" aria-pressed="${i === ci}"><span class="sw" style="${swStyle(x.hex)}"></span><b>${esc(x.name)}</b><em>${esc(x.sku)}</em></div>`).join("");
+  const first = (p.desc.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().match(/^.*?[.!](\s|$)/) || [""])[0];
+  return `<article class="card" data-h="${esc(p.handle)}" data-c="${ci}">
+    <a class="media" href="${href}" aria-label="${esc(p.title)}">
+      <img src="${img(c.image, 640)}" alt="${esc(p.title)} in ${esc(c.name)}" loading="lazy" decoding="async">
+      ${pctOff ? `<span class="badge">-${pctOff}%</span>` : ""}
+      <span class="ctag">${esc(c.name)}</span>
+    </a>
+    <div class="cbody">
+      <div class="cat">${esc(p.category)}</div>
+      <h3><a href="${href}">${esc(p.title)}</a></h3>
+      <div class="cdesc">${esc(first)}</div>
+      <div class="swrow">${sw}<span class="cname">${esc(c.name)}</span></div>
+      <div class="skus"><b class="cs">${esc(c.sku)}</b>${p.colors.length > 1 ? ` &middot; ${p.colors.length} colours` : ""}</div>
+      <div class="cdetail">${detail}</div>
+      <div class="prow"><span class="price">${p.min !== p.max ? "From " : ""}${money(p.min)}</span>${p.compare ? `<span class="was">${money(p.compare)}</span><span class="off">${pctOff}% off</span>` : ""}</div>
+      <div class="sizes">Sizes ${sizeRange(p.sizes)}</div>
+    </div>
+  </article>`;
+}
+
+/* masonry (Pinterest style) in desktop grid mode, plain list otherwise */
+const mounts = new Set();
+const colCount = () => innerWidth >= 1100 ? 4 : innerWidth >= 760 ? 3 : 2;
+function mount(el, items) { el._items = items; mounts.add(el); layout(el); }
+function layout(el) {
+  const items = el._items, mode = effView();
+  el._mode = mode;
+  if (mode === "rows") { el.className = "list"; el._n = 0; el.innerHTML = items.map(p => cardHTML(p)).join(""); return; }
+  const n = colCount(); el._n = n; el.className = "masonry";
+  const cols = Array.from({ length: n }, () => ({ h: 0, html: "" }));
+  items.forEach(p => { const c = cols.reduce((a, b) => b.h < a.h ? b : a); c.html += cardHTML(p); c.h += 1; });
+  el.innerHTML = cols.map(c => `<div class="mcol">${c.html}</div>`).join("");
+}
+let rz;
+window.addEventListener("resize", () => {
+  clearTimeout(rz);
+  rz = setTimeout(() => {
+    mounts.forEach(el => {
+      if (!el.isConnected) { mounts.delete(el); return; }
+      if (el._mode !== effView() || (el._mode === "grid" && el._n !== colCount())) layout(el);
+    });
+  }, 120);
+});
+
+function setCardColor(card, i) {
+  const p = byHandle[card.dataset.h], c = p.colors[i];
+  card.dataset.c = i;
+  swapImg($(".media img", card), img(c.image, 640), p.title + " in " + c.name);
+  $(".cs", card).textContent = c.sku;
+  $(".cname", card).textContent = c.name;
+  $(".ctag", card).textContent = c.name;
+  card.querySelectorAll(".media,h3 a").forEach(a => a.href = colorHref(p, i));
+  card.querySelectorAll(".sw[data-i],.cd[data-i]").forEach(s => s.setAttribute("aria-pressed", s.dataset.i == i));
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest(".card .sw[data-i], .card .cd[data-i]");
+  if (t) { e.preventDefault(); setCardColor(t.closest(".card"), +t.dataset.i); }
+});
+document.addEventListener("mouseover", e => {
+  const t = e.target.closest(".card .sw[data-i]");
+  if (t && matchMedia("(hover:hover)").matches) { const card = t.closest(".card"); if (card.dataset.c != t.dataset.i) setCardColor(card, +t.dataset.i); }
+});
+
+function renderList() {
+  const items = filtered();
+  mount($("#list"), items);
+  $("#empty").hidden = items.length > 0;
+  $("#introsub").textContent = items.length === DATA.length
+    ? `${DATA.length} styles · ${DATA.reduce((n, p) => n + p.colors.length, 0)} colours · Sizes ${ALLSIZES[0]}–${ALLSIZES[ALLSIZES.length - 1]}`
+    : `Showing ${items.length} of ${DATA.length} styles`;
+  const act = activeFilters();
+  const box = $("#active");
+  box.hidden = !act.length;
+  box.innerHTML = act.map(([k, l]) => `<button class="achip" data-rm="${k}">${esc(l)}<span>&times;</span></button>`).join("") + (act.length > 1 ? `<button class="aclear" data-rm="all">Clear all</button>` : "");
+  const dot = $("#fdot"); dot.hidden = !act.length; dot.textContent = act.length;
+  $("#dgo").textContent = items.length ? `Show ${items.length} ${items.length === 1 ? "style" : "styles"}` : "No styles match";
+  document.querySelectorAll("#viewtog button").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === S.view));
+}
+$("#active").addEventListener("click", e => {
+  const b = e.target.closest("[data-rm]"); if (!b) return;
+  const k = b.dataset.rm;
+  if (k === "all") return clearFilters();
+  if (k === "cat") S.cat = "All"; else if (k === "sale") S.sale = false; else if (k === "sort") S.sort = "featured"; else S[k] = "";
+  renderList(); renderDrawer();
+});
+
+/* ---------- filter drawer ---------- */
+function renderDrawer() {
+  const cnt = f => DATA.filter(p => f(p)).length;
+  $("#dbody").innerHTML = `
+    <div class="fsec"><h3>Sort by</h3><div class="fchips">${SORTS.map(([k, l]) => `<button class="fc" data-f="sort" data-v="${k}" aria-pressed="${S.sort === k}">${l}</button>`).join("")}</div></div>
+    <div class="fsec"><h3>Category</h3><div class="fchips">${["All", ...CATS].map(c => `<button class="fc" data-f="cat" data-v="${esc(c)}" aria-pressed="${S.cat === c}">${esc(c)}<i>${c === "All" ? DATA.length : cnt(p => p.category === c)}</i></button>`).join("")}</div></div>
+    <div class="fsec"><h3>Colour</h3><div class="fchips">${FAMS.map(f => `<button class="fc" data-f="fam" data-v="${esc(f)}" aria-pressed="${S.fam === f}"><span class="sw" style="${swStyle(famHex(f))}"></span>${esc(f)}<i>${cnt(p => p.colors.some(c => c.family === f))}</i></button>`).join("")}</div></div>
+    <div class="fsec"><h3>Size</h3><div class="fchips">${ALLSIZES.map(s => `<button class="fc sz" data-f="size" data-v="${s}" aria-pressed="${S.size === s}">${s}</button>`).join("")}</div></div>
+    <div class="fsec"><h3>Price</h3><div class="fchips">${PRICES.filter(r => cnt(p => p.min >= r[2] && p.min < r[3])).map(r => `<button class="fc" data-f="price" data-v="${r[0]}" aria-pressed="${S.price === r[0]}">${r[1]}</button>`).join("")}</div></div>
+    ${DATA.some(p => p.compare) ? `<div class="fsec"><div class="sale-row" data-f="sale" role="switch" tabindex="0" aria-pressed="${S.sale}" aria-checked="${S.sale}">On sale only<span class="switch"></span></div></div>` : ""}`;
+}
+$("#dbody").addEventListener("click", e => {
+  const t = e.target.closest("[data-f]"); if (!t) return;
+  const f = t.dataset.f, v = t.dataset.v;
+  if (f === "sale") S.sale = !S.sale;
+  else if (f === "cat" || f === "sort") S[f] = v;
+  else S[f] = S[f] === v ? "" : v;
+  renderList(); renderDrawer();
+});
+$("#dbody").addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.dataset.f === "sale") { e.preventDefault(); e.target.click(); } });
+let lastFocus;
+function openDrawer() {
+  lastFocus = document.activeElement; renderDrawer();
+  $("#drawer").classList.add("open"); $("#scrim").classList.add("open"); $("#drawer").setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden"; setTimeout(() => $("#dclose").focus(), 50);
+}
+function closeDrawer() {
+  $("#drawer").classList.remove("open"); $("#scrim").classList.remove("open"); $("#drawer").setAttribute("aria-hidden", "true");
+  document.body.style.overflow = ""; if (lastFocus) lastFocus.focus();
+}
+$("#fbtn").addEventListener("click", openDrawer);
+$("#dclose").addEventListener("click", closeDrawer);
+$("#dgo").addEventListener("click", closeDrawer);
+$("#scrim").addEventListener("click", closeDrawer);
+$("#dclear").addEventListener("click", clearFilters);
+$("#emptyclear").addEventListener("click", () => { $("#q").value = ""; S.q = ""; clearFilters(); });
+$("#q").addEventListener("input", e => { S.q = e.target.value.trim().toLowerCase(); renderList(); });
+$("#viewtog").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { S.view = b.dataset.view; store.set("view", S.view); renderList(); } });
+
+/* ---------- product page ---------- */
+const P = { p: null, ci: 0, gi: 0, size: null, all: false, imgs: [] };
+const galleryOf = (p, ci) => { const f = p.colors[ci].image; return [f, ...p.images.filter(u => u !== f)].filter(Boolean); };
+
+function showProduct(handle, colorKey, sizeKey) {
+  const p = byHandle[handle];
+  if (!p) { location.replace("#/"); return; }
+  let ci = p.colors.findIndex(c => c.slug === colorKey);
+  if (ci < 0 && /^\d+$/.test(colorKey || "")) ci = +colorKey;
+  if (ci < 0 || ci >= p.colors.length) ci = 0;
+  const sz = sizeKey && p.colors[ci].variants.some(v => v.size === sizeKey) ? sizeKey : null;
+  Object.assign(P, { p, ci, size: sz, all: false, gi: 0 });
+  P.imgs = galleryOf(p, ci);
+  document.title = `${p.title} (${p.colors[ci].name}) | PELLI`;
+  $("#crumbs").innerHTML = `<a href="#/">&larr; All styles</a><span>${esc(p.category)}</span><span>/</span><span>${esc(p.title)}</span>`;
+  renderGallery(); renderInfo();
+  const i = DATA.indexOf(p), prev = DATA[(i - 1 + DATA.length) % DATA.length], next = DATA[(i + 1) % DATA.length];
+  $("#pn").innerHTML = `<a href="#/p/${prev.handle}/${prev.colors[0].slug}"><small>&larr; Previous</small><span>${esc(prev.title)}</span></a><a href="#/p/${next.handle}/${next.colors[0].slug}"><small>Next &rarr;</small><span>${esc(next.title)}</span></a>`;
+  const same = DATA.filter(x => x.category === p.category && x !== p);
+  const rel = same.concat(DATA.filter(x => x.category !== p.category && x !== p)).slice(0, 4);
+  $("#rel").innerHTML = `<h2>${same.length ? "More " + esc(p.category) : "You may also like"}</h2><div id="relist"></div>`;
+  mount($("#relist"), rel);
+}
+
+function renderGallery() {
+  const p = P.p, n = P.imgs.length;
+  $("#gal").innerHTML = `<div class="stage" id="stage">
+      <img id="mainimg" alt="" decoding="async">
+      ${n > 1 ? `<button class="nav prev" data-a="gp" aria-label="Previous image">&#8249;</button><button class="nav next" data-a="gn" aria-label="Next image">&#8250;</button>` : ""}
+      <span class="imgcount" id="imgcount"></span>
+    </div>
+    <div class="thumbs" id="thumbs">${P.imgs.map((u, i) => {
+      const ci = p.colorByImg[u];
+      return `<button class="th" data-a="gt" data-i="${i}" aria-label="Image ${i + 1}${ci != null ? ", " + esc(p.colors[ci].name) : ""}" title="${ci != null ? esc(p.colors[ci].name) : ""}"><img src="${img(u, 160)}" alt="" loading="lazy">${ci != null ? `<span class="sw" style="${swStyle(p.colors[ci].hex)}"></span>` : ""}</button>`;
+    }).join("")}</div>`;
+  setImage(0, true);
+}
+function setImage(i, instant) {
+  const n = P.imgs.length;
+  P.gi = (i + n) % n;
+  const m = $("#mainimg"); if (!m) return;
+  const url = img(P.imgs[P.gi], 1200), alt = `${P.p.title}, image ${P.gi + 1}`;
+  const stage = $("#stage"); stage.classList.remove("failed");
+  if (instant) { if (m.getAttribute("src") !== url) stage.classList.remove("loaded"); swapImg(m, url, alt); }
+  else {
+    m.classList.add("loading");
+    const t = new Image(); t.onload = t.onerror = () => { swapImg(m, url, alt); m.classList.remove("loading"); }; t.src = url;
+  }
+  $("#imgcount").textContent = `${P.gi + 1} / ${n}`;
+  document.querySelectorAll("#thumbs .th").forEach((b, k) => {
+    const on = k === P.gi; b.setAttribute("aria-current", on);
+    if (on) { const box = $("#thumbs"); box.scrollTo({ left: b.offsetLeft - box.clientWidth / 2 + b.clientWidth / 2, behavior: "smooth" }); }
+  });
+}
+
+function syncUrl() { history.replaceState(null, "", colorHref(P.p, P.ci, P.size)); document.title = `${P.p.title} (${P.p.colors[P.ci].name}) | PELLI`; }
+
+function renderInfo() {
+  const p = P.p, c = p.colors[P.ci];
+  const v = P.size ? c.variants.find(x => x.size === P.size) : null;
+  const rows = (P.all ? p.colors : [c]).flatMap(col => col.variants.map(x => ({ col, x })));
+  const totalVar = p.colors.reduce((n, k) => n + k.variants.length, 0);
+  const pctOff = p.compare ? pct(p.min, p.compare) : 0;
+  $("#info").innerHTML = `
+    <div class="cat big">${esc(p.category)} &middot; PELLI</div>
+    <div class="titlerow"><h1>${esc(p.title)}</h1><button class="share" data-a="share">Copy link</button></div>
+    <div class="prow big"><span class="price">${p.min !== p.max ? "From " : ""}${money(p.min)}</span>${p.compare ? `<span class="was">${money(p.compare)}</span><span class="off">${pctOff}% off</span>` : ""}</div>
+    <div class="skuline">Style code <strong>${esc(c.sku)}</strong><button class="copy" data-a="copy">Copy</button></div>
+
+    <div class="sect"><h2>Colour <b>${esc(c.name)}</b></h2>
+      <div class="colors">${p.colors.map((x, i) => `<button class="cpill" data-a="color" data-i="${i}" aria-pressed="${i === P.ci}"><span class="sw lg" style="${swStyle(x.hex)}"></span><span><b>${esc(x.name)}</b><small>${esc(x.sku)} &middot; ${x.variants.length} sizes</small></span></button>`).join("")}</div>
+    </div>
+
+    <div class="sect"><h2>Size <b>${c.variants.length} sizes in this colour</b></h2>
+      <div class="chips">${c.variants.map(x => `<button class="chip" data-a="size" data-s="${esc(x.size)}" aria-pressed="${x.size === P.size}" title="Size ${esc(x.size)}">${esc(x.size)}</button>`).join("")}</div>
+      ${v ? `<div class="picked"><b>${esc(v.sku)}</b> &middot; ${esc(c.name)} &middot; Size ${esc(v.size)} &middot; <b>${money(v.price)}</b></div>` : ""}
+    </div>
+
+    <div class="sect"><h2>Description</h2><div class="desc">${p.desc}</div></div>
+
+    <div class="sect"><h2>Details</h2>
+      <dl class="specs">
+        <dt>Category</dt><dd>${esc(p.category)}</dd>
+        <dt>Colours</dt><dd>${p.colors.length}</dd>
+        <dt>Style codes</dt><dd>${esc(p.colors.map(x => x.sku).join(", "))}</dd>
+        <dt>Size range</dt><dd>${sizeRange(p.sizes)}</dd>
+        <dt>Variants</dt><dd>${totalVar} colour and size combinations</dd>
+      </dl>
+    </div>
+
+    <div class="sect"><div class="tablehead"><h2>All variants</h2>
+      <label class="tog"><input type="checkbox" data-a="all" ${P.all ? "checked" : ""}> Show all colours (${totalVar})</label></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Colour</th><th>SKU</th><th>Size</th><th>Price</th></tr></thead>
+        <tbody>${rows.map(({ col, x }) => `<tr class="${P.size === x.size && col === c ? "hl" : ""}"><td><span class="tc"><span class="sw" style="${swStyle(col.hex)}"></span>${esc(col.name)}</span></td><td>${esc(x.sku)}</td><td>${esc(x.size)}</td><td>${money(x.price)}${x.compare ? ` <span class="was" style="font-size:12px">${money(x.compare)}</span>` : ""}</td></tr>`).join("")}</tbody>
+      </table></div>
+    </div>`;
+}
+
+/* lightbox */
+function openLB() { $("#lb").hidden = false; document.body.style.overflow = "hidden"; lbShow(); }
+function closeLB() { $("#lb").hidden = true; document.body.style.overflow = ""; }
+function lbShow() { swapImg($("#lbimg"), img(P.imgs[P.gi], 1800), P.p.title); setImage(P.gi, true); }
+
+document.addEventListener("click", e => {
+  if (e.target.id === "mainimg") return openLB();
+  if (e.target.id === "lb") return closeLB();
+  const t = e.target.closest("[data-a]"); if (!t) return;
+  const a = t.dataset.a, n = P.imgs.length;
+  if (a === "gp") setImage(P.gi - 1);
+  else if (a === "gn") setImage(P.gi + 1);
+  else if (a === "gt") setImage(+t.dataset.i);
+  else if (a === "lbx") closeLB();
+  else if (a === "lbp") { P.gi = (P.gi - 1 + n) % n; lbShow(); }
+  else if (a === "lbn") { P.gi = (P.gi + 1) % n; lbShow(); }
+  else if (a === "color") {
+    P.ci = +t.dataset.i; P.size = null; P.imgs = galleryOf(P.p, P.ci);
+    renderGallery(); renderInfo(); syncUrl();
+  }
+  else if (a === "size") { P.size = P.size === t.dataset.s ? null : t.dataset.s; renderInfo(); syncUrl(); }
+  else if (a === "all") { P.all = t.checked; renderInfo(); }
+  else if (a === "copy" || a === "share") {
+    const txt = a === "copy" ? P.p.colors[P.ci].sku : location.href;
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast(a === "copy" ? "SKU copied" : "Link copied")).catch(() => toast("Copy not available here"));
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { if (!$("#lb").hidden) closeLB(); else if ($("#drawer").classList.contains("open")) closeDrawer(); return; }
+  if (P.p && !$("#product").hidden && !/input|select|textarea/i.test(e.target.tagName)) {
+    if (e.key === "ArrowLeft") { setImage(P.gi - 1); if (!$("#lb").hidden) lbShow(); }
+    if (e.key === "ArrowRight") { setImage(P.gi + 1); if (!$("#lb").hidden) lbShow(); }
+  }
+});
+
+/* ---------- router ---------- */
+let savedY = 0, inProduct = false;
+function route() {
+  const m = location.hash.slice(1).match(/^\/p\/([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?/);
+  if (!$("#lb").hidden) closeLB();
+  if ($("#drawer").classList.contains("open")) closeDrawer();
+  if (m) {
+    if (!inProduct) savedY = window.scrollY;
+    inProduct = true;
+    $("#catalog").hidden = true; $("#product").hidden = false;
+    showProduct(decodeURIComponent(m[1]), m[2] && decodeURIComponent(m[2]), m[3] && decodeURIComponent(m[3]));
+    window.scrollTo(0, 0);
+  } else {
+    $("#product").hidden = true; $("#catalog").hidden = false;
+    document.title = "PELLI | Catalogue";
+    const y = inProduct ? savedY : 0; inProduct = false;
+    requestAnimationFrame(() => window.scrollTo(0, y));
+  }
+}
+window.addEventListener("hashchange", route);
+renderList(); route();
+</script>
+</body>
+</html>
